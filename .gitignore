@@ -1,0 +1,12 @@
+.vscode/
+__pycache__/
+env/
+venv/
+.env
+instance/
+*.pyc
+.DS_Store
+.venv/
+firebase_key.json
+/uploads
+*.log
