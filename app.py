@@ -12,7 +12,7 @@ def download(github_path):
 
 @app.route("/upload_file", methods=["POST"])
 def upload_file():
-    user_id = request.user.get("user_id", None)
+    user_id = request.form.get("user_id")
     file_id = request.form.get("file_id")
     file_type = request.form.get("file_type", "")
 
