@@ -81,7 +81,7 @@ def upload_file(file_path, content, commit_message):
             path=file_path,
             message=commit_message,
             content=content,
-            branch=CONFIG.GITHUB_BRANCH_NAME
+            branch=CONFIG.GITHUB1.GITHUB_BRANCH_NAME
         )
         return True
     except Exception as e:

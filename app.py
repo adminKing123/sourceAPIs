@@ -6,9 +6,9 @@ from files import utils as files
 app = Flask(__name__)
 CORS(app)
 
-@app.route("/download/<path:github_path>")
-def download(github_path):
-    return files.download_file_stream(github_path)
+@app.route("/download/<path:file_path_o>")
+def download(file_path_o):
+    return files.download_file_stream(file_path_o)
 
 @app.route("/upload_file", methods=["POST"])
 def upload_file():
@@ -33,17 +33,18 @@ def upload_file():
 
 @app.route("/delete_file/<filename>", methods=["DELETE"])
 def delete_file(filename):
-    user_id = request.user.get("user_id")
+    user_id = request.form.get("user_id")
 
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
 
     # GitHub repo path (same as upload logic)
-    github_path = f"uploads/{user_id}/{filename}"
+    file_path_o = f"{CONFIG.UPLOAD1.UPLOAD_FOLDER}/{user_id}/{filename}"
+    print(file_path_o)
     commit_message = f"Delete file {filename} for user {user_id}"
 
     success = files.remove_file(
-        file_path=github_path,
+        file_path=file_path_o,
         commit_message=commit_message
     )
 
