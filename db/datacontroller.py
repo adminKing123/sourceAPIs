@@ -16,7 +16,7 @@ class File:
     def __init__(self, client):
         self.client = client
     
-    def add_file(self, user_id, file_data, parent_id="root"):
+    def add_file(self, user_id, file_data, chat_id="", parent_id="root"):
         try:
             file_id = file_data.get("file_id")
             if not file_id:
@@ -27,9 +27,10 @@ class File:
                 "meta_data": file_data,
                 "parent_id": parent_id,
                 "owner_id": user_id,
-                "created_at": datetime.utcnow().isoformat() + "Z"
+                "created_at": datetime.utcnow().isoformat() + "Z",
+                "chat_id": chat_id
             }
-            # files collection
+            
             doc_ref = self.client.collection("files").document(data["id"])
             doc_ref.set(data)
             return doc_ref.id

@@ -32,7 +32,7 @@ def upload_file():
         return jsonify({"error": "Empty filename"}), 400
 
     file_meta = files.save_file(file, user_id, file_id, file_type)
-    db.file.add_file(user_id, file_meta)
+    db.file.add_file(user_id, file_meta, chat_id=chat_id)
     return jsonify(file_meta), 201
 
 @app.route("/delete_file/<file_id>", methods=["DELETE"])
