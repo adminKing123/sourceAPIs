@@ -27,3 +27,4 @@ class CONFIG:
     UPLOAD1 = UploadsConfig(
         UPLOAD_FOLDER=os.getenv("UPLOAD1_FOLDER", "sources")
     )
+    FIREBASE_CREDENTIALS = os.getenv("FIREBASE_CREDENTIALS", "")

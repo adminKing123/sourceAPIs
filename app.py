@@ -2,22 +2,26 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from config import CONFIG
 from files import utils as files
+from middleware.auth import require_auth
 
 app = Flask(__name__)
 CORS(app)
 
 @app.route("/download/<path:file_path_o>")
+@require_auth
 def download(file_path_o):
     return files.download_file_stream(file_path_o)
 
 @app.route("/upload_file", methods=["POST"])
+@require_auth
 def upload_file():
-    user_id = request.form.get("user_id")
+    user_id = request.user.get("user_id", None)
+    chat_id = request.form.get("chat_id")
     file_id = request.form.get("file_id")
     file_type = request.form.get("file_type", "")
 
-    if not user_id or not file_id:
-        return jsonify({"error": "user_id and file_id are required"}), 400
+    if not chat_id or not user_id or not file_id:
+        return jsonify({"error": "chat_id, user_id, and file_id are required"}), 400
 
     if "file" not in request.files:
         return jsonify({"error": "No file provided"}), 400
@@ -32,19 +36,19 @@ def upload_file():
     return jsonify(file_meta), 201
 
 @app.route("/delete_file/<filename>", methods=["DELETE"])
+@require_auth
 def delete_file(filename):
-    user_id = request.form.get("user_id")
+    user_id = request.user.get("user_id")
 
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
 
     # GitHub repo path (same as upload logic)
-    file_path_o = f"{CONFIG.UPLOAD1.UPLOAD_FOLDER}/{user_id}/{filename}"
-    print(file_path_o)
+    github_path = f"{CONFIG.UPLOAD1.UPLOAD_FOLDER}/{user_id}/{filename}"
     commit_message = f"Delete file {filename} for user {user_id}"
 
     success = files.remove_file(
-        file_path=file_path_o,
+        file_path=github_path,
         commit_message=commit_message
     )
 
