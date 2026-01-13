@@ -8,7 +8,6 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route("/download/<path:file_path_o>")
-@require_auth
 def download(file_path_o):
     return files.download_file_stream(file_path_o)
 
