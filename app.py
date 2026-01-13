@@ -61,7 +61,7 @@ def delete_file(file_id):
     if not success:
         return jsonify({"error": "File not found or delete failed"}), 404
     
-    db.file.remove_file(filename)
+    db.file.remove_file(file_id)
 
     return jsonify({
         "success": True,
