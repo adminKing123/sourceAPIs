@@ -3,6 +3,7 @@ from flask_cors import CORS
 from config import CONFIG
 from files import utils as files
 from middleware.auth import require_auth
+from db import db
 
 app = Flask(__name__)
 CORS(app)
@@ -31,13 +32,19 @@ def upload_file():
         return jsonify({"error": "Empty filename"}), 400
 
     file_meta = files.save_file(file, user_id, file_id, file_type)
-
+    db.file.add_file(user_id, file_meta)
     return jsonify(file_meta), 201
 
-@app.route("/delete_file/<filename>", methods=["DELETE"])
+@app.route("/delete_file/<file_id>", methods=["DELETE"])
 @require_auth
-def delete_file(filename):
+def delete_file(file_id):
     user_id = request.user.get("user_id")
+
+    file_data = db.file.get_file(file_id)
+    if not file_data or "meta_data" not in file_data or "filename" not in file_data["meta_data"]:
+        return jsonify({"error": "File not found"}), 404
+    
+    filename = file_data["meta_data"]["filename"]
 
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
@@ -53,6 +60,8 @@ def delete_file(filename):
 
     if not success:
         return jsonify({"error": "File not found or delete failed"}), 404
+    
+    db.file.remove_file(filename)
 
     return jsonify({
         "success": True,

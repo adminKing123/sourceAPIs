@@ -4,7 +4,6 @@ import requests
 from flask import Response, stream_with_context
 from github import Github
 from werkzeug.utils import secure_filename
-import uuid
 
 github = Github(CONFIG.GITHUB1.GITHUB_TOKEN)
 repo = github.get_user().get_repo(CONFIG.GITHUB1.GITHUB_REPO_NAME)
@@ -67,7 +66,7 @@ def save_file(file, user_id, file_id, file_type=""):
             "filename": filename,
             "file_type": file_type,
             "size": len(file_content),
-            "download_url": f"{CONFIG.HOST}/download/{github_path}"
+            "download_url": f"{CONFIG.HOST}/download/{github_path}",
         }
 
     except Exception as e:
